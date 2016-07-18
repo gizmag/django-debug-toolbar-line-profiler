@@ -23,8 +23,12 @@ class DjangoDebugToolbarStats(Stats):
 
     def get_root_func(self, view_func):
         if self.__root is None:
-            filename = view_func.__code__.co_filename
-            firstlineno = view_func.__code__.co_firstlineno
+            try:
+                filename = view_func.__code__.co_filename
+                firstlineno = view_func.__code__.co_firstlineno
+            except AttributeError:
+                # view_func cannot be profiled
+                return
             for func, (cc, nc, tt, ct, callers) in self.stats.items():
                 if (len(callers) == 0
                         and func[0] == filename
